@@ -8,7 +8,7 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://music-player-ui-ux.vercel.app"],
+    allow_origins=["https://music-player-ui-ux.vercel.app", "http://127.0.0.1:60640"],
     allow_credentials=False,
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
