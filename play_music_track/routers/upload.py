@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
 from typing import List
 from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
@@ -31,7 +32,10 @@ async def upload_audio(
         )
 
     # Step 4: Upload audio file to Cloudinary
-    secure_url = await upload_to_cloudinary(file.file)
+    try:
+        secure_url = await upload_to_cloudinary(file.file)
+    except Exception as e:
+        return JsonResponse({"status_code": e.status_code, "detail": e.detail})
 
     # Step 4: Save to database
     audio_entry = AudioModel(
