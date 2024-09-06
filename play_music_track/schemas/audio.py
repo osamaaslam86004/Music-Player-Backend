@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class AudioFormSchema(BaseModel):
@@ -12,4 +12,17 @@ class AudioFormSchema(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {"track_name": "My Song", "author_name": "John Doe"}
+        }
+
+
+class AudioResponseSchema(AudioFormSchema):
+    url: HttpUrl = Field(..., description="URL of the audio track")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "track_name": "My Song",
+                "author_name": "John Doe",
+                "url": "https://example.com/audio.mp3",
+            }
         }

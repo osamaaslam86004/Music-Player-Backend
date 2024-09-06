@@ -1,5 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
-from play_music_track.schemas.audio import AudioFormSchema
+from typing import List
+from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
 from play_music_track.services.cloudinary_services import upload_to_cloudinary
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
@@ -49,6 +50,12 @@ async def upload_audio(
         "track_name": audio_entry.track_name,
         "author_name": audio_entry.author_name,
     }
+
+
+@router.get("/tracks", response_model=List[AudioResponseSchema])
+async def get_audio_tracks(db: Session = Depends(get_db)):
+    tracks = db.query(AudioModel).all()
+    return tracks
 
 
 @router.get("/")
