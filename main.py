@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from play_music_track.routers import upload
-from database import Base, engine
+
+# from database import Base, engine
 
 app = FastAPI()
 
@@ -30,8 +31,8 @@ app.add_middleware(
 )
 
 
-# Create all tables in the database
-Base.metadata.create_all(bind=engine)
+# Sync Operation: Create all tables in the database
+# Base.metadata.create_all(bind=engine)
 
 # Include the upload module's routes
 app.include_router(upload.router)

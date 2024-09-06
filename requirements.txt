@@ -5,3 +5,6 @@ cloudinary
 sqlalchemy
 python-multipart
 django
+Mako, 
+asyncpg, 
+alembic
