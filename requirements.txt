@@ -4,4 +4,4 @@ pydantic
 cloudinary
 sqlalchemy
 python-multipart
-django==4.2.8
+django
