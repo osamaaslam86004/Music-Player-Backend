@@ -9,3 +9,5 @@ Mako
 asyncpg
 alembic
 tomlkit
+# pytest
+# pytest-asyncio

@@ -1,4 +1,5 @@
 # from django.http import JsonResponse
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
@@ -44,16 +45,24 @@ async def upload_audio(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cloudinary error: {str(e)}")
 
-    # Step 5: Save to the database using async SQLAlchemy
-    audio_entry = AudioModel(
-        url=secure_url,
-        track_name=audio_data.track_name,
-        author_name=audio_data.author_name,
-    )
+    try:
+        # Step 5: Save to the database using async SQLAlchemy
+        audio_entry = AudioModel(
+            url=secure_url,
+            track_name=audio_data.track_name,
+            author_name=audio_data.author_name,
+        )
 
-    db.add(audio_entry)
-    await db.commit()  # Commit the transaction (awaited)
-    await db.refresh(audio_entry)  # Refresh to get the updated data (awaited)
+        db.add(audio_entry)
+        await db.commit()  # Commit the transaction (awaited)
+        await db.refresh(audio_entry)  # Refresh to get the updated data (awaited)
+
+    except OperationalError as e:
+        # Handle connection loss error
+        logger.error(f"Connection to database lost: {e}")
+        raise HTTPException(
+            status_code=503, detail="Database connection lost. Please try again."
+        )
 
     # Step 6: Return the data including the Cloudinary URL and saved info
     return {
@@ -70,6 +79,11 @@ async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
         result = await db.execute(select(AudioModel))
         tracks = result.scalars().all()
         return tracks
+
+    except OperationalError as e:
+        logger.error(f"Connection to database lost: {e}")
+        raise HTTPException(status_code=503, detail="Database connection lost")
+
     except Exception as e:
         logger.error(f"Error in get_audio_tracks: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
