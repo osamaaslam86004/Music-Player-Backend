@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+# from django.http import JsonResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
@@ -8,8 +8,12 @@ from play_music_track.services.cloudinary_services import upload_to_cloudinary
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 from database import get_db
-from sqlalchemy.orm import Session
+
+# from sqlalchemy.orm import Session
 from play_music_track.models.models import Audio as AudioModel
+import logging
+
+logger = logging.getLogger("uvicorn")
 
 
 router = APIRouter()
@@ -62,10 +66,13 @@ async def upload_audio(
 
 @router.get("/tracks", response_model=List[AudioResponseSchema])
 async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
-    # Use `select()` for querying with async SQLAlchemy
-    result = await db.execute(select(AudioModel))  # Async query execution
-    tracks = result.scalars().all()  # Fetch all results
-    return tracks
+    try:
+        result = await db.execute(select(AudioModel))
+        tracks = result.scalars().all()
+        return tracks
+    except Exception as e:
+        logger.error(f"Error in get_audio_tracks: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @router.get("/")
