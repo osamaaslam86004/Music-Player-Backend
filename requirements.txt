@@ -8,3 +8,4 @@ django
 Mako
 asyncpg
 alembic
+tomlkit
