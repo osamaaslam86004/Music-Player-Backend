@@ -7,10 +7,6 @@ DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4
 # Create the database engine
 engine = create_async_engine(DATABASE_URL, echo=True)
 
-# The declarative_base() function is a synchronous operation that
-# sets up a base class for all of your SQLAlchemy ORM models. This base
-# class holds metadata about your models and is used to map your Python classes to database tables.
-
 
 # Create a base class for your models
 Base = declarative_base()
@@ -19,12 +15,6 @@ Base = declarative_base()
 AsyncSessionLocal = sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
-
-
-# Asynchronous operations in SQLAlchemy typically involve operations
-# with the database engine, session, and queries, which are handled
-# using the asyncpg driver and AsyncSession for non-blocking,
-# asynchronous interactions with the database.
 
 
 # Dependency to get the database session in FastAPI routes
