@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from database import Base
+from play_music_track.models.base import Base
 
 
 class Audio(Base):

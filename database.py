@@ -1,16 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
+
+DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb"
 
 
 # Create the database engine
 engine = create_async_engine(DATABASE_URL, echo=True)
 
-
-# Create a base class for your models
-Base = declarative_base()
 
 # Create a configured "Session" class
 AsyncSessionLocal = sessionmaker(
