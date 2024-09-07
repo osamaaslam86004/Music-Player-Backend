@@ -1,6 +1,7 @@
+from fastapi.responses import JSONResponse
+from fastapi import status
 from play_music_track.config import cloudinary
 from cloudinary.uploader import upload
-from fastapi import HTTPException
 
 
 async def upload_to_cloudinary(file):
@@ -13,13 +14,7 @@ async def upload_to_cloudinary(file):
         return secure_url
 
     except Exception as e:
-        # Extract status code and details if possible from the exception
-        status_code = 500  # Default to 500 if status code isn't provided
-        detail = str(e)
-        if hasattr(e, "response") and hasattr(e.response, "status_code"):
-            status_code = e.response.status_code
-        if hasattr(e, "response") and hasattr(e.response, "text"):
-            detail = e.response.text
-
-        # Raise HTTPException with the status code and details
-        raise HTTPException(status_code=status_code, detail=detail)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=f"Cloudinary error: {str(e)}",
+        )

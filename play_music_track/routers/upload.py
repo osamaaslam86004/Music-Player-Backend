@@ -2,7 +2,8 @@
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends, status
+from fastapi.responses import JSONResponse
 from typing import List
 from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
 from play_music_track.services.cloudinary_services import upload_to_cloudinary
@@ -31,19 +32,20 @@ async def upload_audio(
     try:
         audio_data = AudioFormSchema(track_name=track_name, author_name=author_name)
     except ValidationError as e:
-        raise HTTPException(status_code=400, detail=e.errors())
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content=e.errors(),
+        )
 
     # Step 2: Check file type (ensure it's an mp3 file)
     if file.content_type not in ["audio/mpeg", "audio/mp3"]:
-        raise HTTPException(
-            status_code=400, detail="Invalid file type. Only MP3 files are allowed."
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content="Invalid file type. Only MP3 files are allowed.",
         )
 
     # Step 4: Upload audio file to Cloudinary
-    try:
-        secure_url = await upload_to_cloudinary(file.file)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Cloudinary error: {str(e)}")
+    secure_url = await upload_to_cloudinary(file.file)
 
     try:
         # Step 5: Save to the database using async SQLAlchemy
@@ -60,8 +62,9 @@ async def upload_audio(
     except OperationalError as e:
         # Handle connection loss error
         logger.error(f"Connection to database lost: {e}")
-        raise HTTPException(
-            status_code=503, detail="Database connection lost. Please try again."
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content="Database Connection Lost",
         )
 
     # Step 6: Return the data including the Cloudinary URL and saved info
@@ -82,11 +85,17 @@ async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
 
     except OperationalError as e:
         logger.error(f"Connection to database lost: {e}")
-        raise HTTPException(status_code=503, detail="Database connection lost")
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content="Database Connection Lost",
+        )
 
     except Exception as e:
         logger.error(f"Error in get_audio_tracks: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=f"{e}",
+        )
 
 
 @router.get("/")
