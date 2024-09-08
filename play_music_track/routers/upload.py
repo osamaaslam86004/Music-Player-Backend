@@ -21,7 +21,7 @@ logger = logging.getLogger("uvicorn")
 router = APIRouter()
 
 
-@router.post("/upload")
+@router.post("/upload/")
 async def upload_audio(
     track_name: str = Form(...),
     author_name: str = Form(...),
@@ -76,7 +76,7 @@ async def upload_audio(
     }
 
 
-@router.get("/tracks", response_model=List[AudioResponseSchema])
+@router.get("/tracks/", response_model=List[AudioResponseSchema])
 async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
     try:
         result = await db.execute(select(AudioModel))
