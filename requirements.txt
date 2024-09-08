@@ -9,4 +9,3 @@ Mako
 asyncpg
 alembic
 tomlkit
-asyncio
