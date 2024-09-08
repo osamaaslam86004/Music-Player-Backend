@@ -1,2 +1,21 @@
+# GET https://music-player-backend-for-music-player-ui-ux.vercel.app/tracks/
 
-GET https://music-player-backend-for-music-player-ui-ux.vercel.app/tracks/
+# POST http://127.0.0.1:8000/upload/
+POST https://music-player-backend-for-music-player-ui-ux.vercel.app/upload/
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="track_name"
+
+My Song
+--boundary
+Content-Disposition: form-data; name="author_name"
+
+John Doe
+--boundary
+Content-Disposition: form-data; name="file"; filename="bangla-background-music-no-copyright-background-music-218993.mp3"
+Content-Type: audio/mpeg
+
+<your file content here>
+--boundary--
+

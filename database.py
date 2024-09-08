@@ -10,13 +10,13 @@ logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)  # Logs all SQL qu
 
 
 # DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
-DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb?ssl=require"
+DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb"
 
 
 # SSL context setup
-# ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-# ssl_context.check_hostname = True
-# ssl_context.verify_mode = ssl.CERT_REQUIRED
+ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+ssl_context.check_hostname = True
+ssl_context.verify_mode = ssl.CERT_REQUIRED
 
 # Create the database engine
 engine = create_async_engine(
