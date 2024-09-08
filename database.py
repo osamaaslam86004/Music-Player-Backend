@@ -4,6 +4,9 @@ from sqlalchemy.exc import OperationalError
 import asyncio
 import logging
 
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)  # Logs all SQL queries
+
 
 # DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
 DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
@@ -12,8 +15,10 @@ DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
-    pool_size=5,  # Adjust based on your traffic
-    max_overflow=10,  # Number of overflow connections
+    pool_size=5,
+    max_overflow=10,
+    pool_timeout=30,  # Adjust timeout to wait for a connection from the pool
+    pool_recycle=3600,  # Recycle connections every hour
 )
 
 
