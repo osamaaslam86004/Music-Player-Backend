@@ -2,7 +2,7 @@
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends, status
+from fastapi import APIRouter, File, UploadFile, Form, Depends, status
 from fastapi.responses import JSONResponse
 from typing import List
 from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
