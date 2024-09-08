@@ -5,6 +5,7 @@ cloudinary
 sqlalchemy
 python-multipart
 Mako
+tomlkit
 asyncpg
 alembic
 fastapi-utils
