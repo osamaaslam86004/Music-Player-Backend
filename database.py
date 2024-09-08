@@ -5,7 +5,8 @@ import asyncio
 import logging
 
 
-DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
+# DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
+DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
 
 # Create the database engine
 engine = create_async_engine(
