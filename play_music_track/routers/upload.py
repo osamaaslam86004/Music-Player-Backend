@@ -45,35 +45,30 @@ async def upload_audio(
 
     secure_url = await upload_to_cloudinary(file.file)
 
-    retries = 3
-    while retries > 0:
-        await asyncio.sleep(5)
-        try:
-            audio_entry = AudioModel(
-                url=secure_url,
-                track_name=audio_data.track_name,
-                author_name=audio_data.author_name,
-            )
-            db.add(audio_entry)
-            await db.commit()
-            await db.refresh(audio_entry)
+    try:
+        audio_entry = AudioModel(
+            url=secure_url,
+            track_name=audio_data.track_name,
+            author_name=audio_data.author_name,
+        )
+        db.add(audio_entry)
+        await db.commit()
+        await db.refresh(audio_entry)
 
-            return {
-                "id": audio_entry.id,
-                "url": secure_url,
-                "track_name": audio_entry.track_name,
-                "author_name": audio_entry.author_name,
-            }
+        return {
+            "id": audio_entry.id,
+            "url": secure_url,
+            "track_name": audio_entry.track_name,
+            "author_name": audio_entry.author_name,
+        }
 
-        except OperationalError as e:
-            logger.error(f"Database connection error: {e}. Retrying...")
-            await asyncio.sleep(5)
-            retries -= 1
+    except OperationalError as e:
+        logging.error(f"Database connection failed: {e}. Retrying in 5 seconds...")
 
-    return JSONResponse(
-        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-        content="Database Connection Lost after retries.",
-    )
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content="Database Connection Lost after retries.",
+        )
 
 
 # @router.post("/upload/")

@@ -1,5 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
+import asyncio
+import logging
 
 
 DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
@@ -19,10 +22,21 @@ AsyncSessionLocal = sessionmaker(
 )
 
 
-# Dependency to get the database session in FastAPI routes
+# Dependency to get the database session in FastAPI routes with retry logic
 async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+    retries = 3
+    while retries > 0:
+        try:
+            async with AsyncSessionLocal() as session:
+                yield session
+                break  # Exit the loop if the session is successful
+        except OperationalError as e:
+            logging.error(f"Database connection failed: {e}. Retrying in 5 seconds...")
+            await asyncio.sleep(5)  # Wait before retrying
+            retries -= 1
+
+    if retries == 0:
+        logging.error("Failed to establish a database connection after retries.")
 
 
 # # database.py
