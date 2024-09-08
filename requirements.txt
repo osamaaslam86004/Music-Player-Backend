@@ -9,3 +9,4 @@ Mako
 asyncpg
 alembic
 tomlkit
+fastapi-utils
