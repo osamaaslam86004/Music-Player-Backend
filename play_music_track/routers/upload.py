@@ -1,4 +1,5 @@
 # from django.http import JsonResponse
+import asyncio
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -28,7 +29,6 @@ async def upload_audio(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
 ):
-    # Step 1: Validate form data
     try:
         audio_data = AudioFormSchema(track_name=track_name, author_name=author_name)
     except ValidationError as e:
@@ -37,43 +37,97 @@ async def upload_audio(
             content=e.errors(),
         )
 
-    # Step 2: Check file type (ensure it's an mp3 file)
     if file.content_type not in ["audio/mpeg", "audio/mp3"]:
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content="Invalid file type. Only MP3 files are allowed.",
         )
 
-    # Step 4: Upload audio file to Cloudinary
     secure_url = await upload_to_cloudinary(file.file)
 
-    try:
-        # Step 5: Save to the database using async SQLAlchemy
-        audio_entry = AudioModel(
-            url=secure_url,
-            track_name=audio_data.track_name,
-            author_name=audio_data.author_name,
-        )
+    retries = 3
+    while retries > 0:
+        try:
+            audio_entry = AudioModel(
+                url=secure_url,
+                track_name=audio_data.track_name,
+                author_name=audio_data.author_name,
+            )
+            db.add(audio_entry)
+            await db.commit()
+            await db.refresh(audio_entry)
 
-        db.add(audio_entry)
-        await db.commit()  # Commit the transaction (awaited)
-        await db.refresh(audio_entry)  # Refresh to get the updated data (awaited)
+            return {
+                "id": audio_entry.id,
+                "url": secure_url,
+                "track_name": audio_entry.track_name,
+                "author_name": audio_entry.author_name,
+            }
 
-    except OperationalError as e:
-        # Handle connection loss error
-        logger.error(f"Connection to database lost: {e}")
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content="Database Connection Lost",
-        )
+        except OperationalError as e:
+            logger.error(f"Database connection error: {e}. Retrying...")
+            await asyncio.sleep(1)  # Small delay before retrying
+            retries -= 1
 
-    # Step 6: Return the data including the Cloudinary URL and saved info
-    return {
-        "id": audio_entry.id,
-        "url": secure_url,
-        "track_name": audio_entry.track_name,
-        "author_name": audio_entry.author_name,
-    }
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content="Database Connection Lost after retries.",
+    )
+
+
+# @router.post("/upload/")
+# async def upload_audio(
+#     track_name: str = Form(...),
+#     author_name: str = Form(...),
+#     file: UploadFile = File(...),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     # Step 1: Validate form data
+#     try:
+#         audio_data = AudioFormSchema(track_name=track_name, author_name=author_name)
+#     except ValidationError as e:
+#         return JSONResponse(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             content=e.errors(),
+#         )
+
+#     # Step 2: Check file type (ensure it's an mp3 file)
+#     if file.content_type not in ["audio/mpeg", "audio/mp3"]:
+#         return JSONResponse(
+#             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+#             content="Invalid file type. Only MP3 files are allowed.",
+#         )
+
+#     # Step 4: Upload audio file to Cloudinary
+#     secure_url = await upload_to_cloudinary(file.file)
+
+#     try:
+#         # Step 5: Save to the database using async SQLAlchemy
+#         audio_entry = AudioModel(
+#             url=secure_url,
+#             track_name=audio_data.track_name,
+#             author_name=audio_data.author_name,
+#         )
+
+#         db.add(audio_entry)
+#         await db.commit()  # Commit the transaction (awaited)
+#         await db.refresh(audio_entry)  # Refresh to get the updated data (awaited)
+
+#     except OperationalError as e:
+#         # Handle connection loss error
+#         logger.error(f"Connection to database lost: {e}")
+#         return JSONResponse(
+#             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+#             content="Database Connection Lost",
+#         )
+
+#     # Step 6: Return the data including the Cloudinary URL and saved info
+#     return {
+#         "id": audio_entry.id,
+#         "url": secure_url,
+#         "track_name": audio_entry.track_name,
+#         "author_name": audio_entry.author_name,
+#     }
 
 
 @router.get("/tracks/", response_model=List[AudioResponseSchema])
