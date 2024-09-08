@@ -5,7 +5,12 @@ from sqlalchemy.orm import sessionmaker
 DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
 
 # Create the database engine
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_size=5,  # Adjust based on your traffic
+    max_overflow=10,  # Number of overflow connections
+)
 
 
 # Create a configured "Session" class
