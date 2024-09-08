@@ -21,7 +21,7 @@ ssl_context.verify_mode = ssl.CERT_REQUIRED
 # Create the database engine
 engine = create_async_engine(
     DATABASE_URL,
-    # connect_args={"ssl": ssl_context},  # Pass the SSL context to the connection
+    connect_args={"ssl": ssl_context},  # Pass the SSL context to the connection
     echo=True,
     pool_size=5,
     max_overflow=10,
