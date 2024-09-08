@@ -10,3 +10,4 @@ asyncpg
 alembic
 tomlkit
 fastapi-utils
+typing-inspect
