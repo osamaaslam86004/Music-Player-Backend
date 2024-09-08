@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
-import asyncio
+
+# import asyncio
 import logging
 
 # import ssl
@@ -25,8 +26,10 @@ engine = create_async_engine(
     echo=True,
     pool_size=5,
     max_overflow=10,
-    pool_timeout=30,  # Adjust timeout to wait for a connection from the pool
-    pool_recycle=3600,  # Recycle connections every hour
+    pool_timeout=360,  # Adjust timeout to wait for a connection from the pool
+    pool_recycle=3600,
+    # poolclass = NullPoll 1. only be used in synchronous calls (db-api)
+    # 2. causes opening and closing connection for every query 3. connection pooling becomes useless
 )
 
 
@@ -38,7 +41,7 @@ AsyncSessionLocal = sessionmaker(
 
 # Dependency to get the database session in FastAPI routes with retry logic
 async def get_db():
-    retries = 3
+    retries = 25
     while retries > 0:
         try:
             async with AsyncSessionLocal() as session:
@@ -46,7 +49,7 @@ async def get_db():
                 break  # Exit the loop if the session is successful
         except OperationalError as e:
             logging.error(f"Database connection failed: {e}. Retrying in 5 seconds...")
-            await asyncio.sleep(5)  # Wait before retrying
+            # await asyncio.sleep(5)  # Wait before retrying
             retries -= 1
 
     if retries == 0:
