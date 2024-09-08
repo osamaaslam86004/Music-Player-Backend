@@ -1,7 +1,7 @@
 # GET https://music-player-backend-for-music-player-ui-ux.vercel.app/tracks/
 
-# POST http://127.0.0.1:8000/upload/
-POST https://music-player-backend-for-music-player-ui-ux.vercel.app/upload/
+POST http://127.0.0.1:8000/upload/
+# POST https://music-player-backend-for-music-player-ui-ux.vercel.app/upload/
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary

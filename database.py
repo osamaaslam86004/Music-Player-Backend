@@ -21,7 +21,7 @@ DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4
 # Create the database engine
 engine = create_async_engine(
     DATABASE_URL,
-    connect_args={"ssl": {}},  # Pass the SSL context to the connection or use default
+    # connect_args={"ssl": {}},  # Pass the SSL context to the connection or use default
     echo=True,
     pool_size=5,
     max_overflow=10,
