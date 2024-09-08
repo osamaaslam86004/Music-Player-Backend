@@ -1,5 +1,3 @@
-# from django.http import JsonResponse
-import asyncio
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select

@@ -4,10 +4,8 @@ pydantic
 cloudinary
 sqlalchemy
 python-multipart
-django
 Mako
 asyncpg
 alembic
-tomlkit
 fastapi-utils
 typing-inspect
