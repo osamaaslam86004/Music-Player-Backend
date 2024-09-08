@@ -66,6 +66,7 @@ async def upload_audio(
 
         except OperationalError as e:
             logger.error(f"Database connection error: {e}. Retrying...")
+            await asyncio.sleep(5)
             retries -= 1
 
     return JSONResponse(
