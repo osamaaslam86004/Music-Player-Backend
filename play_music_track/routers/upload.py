@@ -47,6 +47,7 @@ async def upload_audio(
 
     retries = 3
     while retries > 0:
+        await asyncio.sleep(5)
         try:
             audio_entry = AudioModel(
                 url=secure_url,
