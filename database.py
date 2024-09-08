@@ -3,7 +3,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 import asyncio
 import logging
-import ssl
+
+# import ssl
 
 logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)  # Logs all SQL queries
