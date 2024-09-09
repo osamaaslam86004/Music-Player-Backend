@@ -1,5 +1,4 @@
 # from django.http import JsonResponse
-import asyncio
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -11,6 +10,7 @@ from play_music_track.services.cloudinary_services import upload_to_cloudinary
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 from database import get_db
+from user.auth_handler import JWTBearer
 
 # from sqlalchemy.orm import Session
 from play_music_track.models.models import Audio as AudioModel
@@ -28,6 +28,7 @@ async def upload_audio(
     author_name: str = Form(...),
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(JWTBearer()),
 ):
     try:
         audio_data = AudioFormSchema(track_name=track_name, author_name=author_name)
@@ -127,7 +128,10 @@ async def upload_audio(
 
 
 @router.get("/tracks/", response_model=List[AudioResponseSchema])
-async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
+async def get_audio_tracks(
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(JWTBearer()),
+):
     try:
         result = await db.execute(select(AudioModel))
         tracks = result.scalars().all()

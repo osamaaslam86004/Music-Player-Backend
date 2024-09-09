@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 import asyncio
 import logging
+from main import app
 
 # import ssl
 
@@ -52,6 +53,18 @@ async def get_db():
 
     if retries == 0:
         logging.error("Failed to establish a database connection after retries.")
+
+
+@app.event("startup")
+async def startup_event():
+    logging.info("App startup: Engine initialized")
+
+
+@app.event("shutdown")
+async def shutdown_event():
+    # Ensure all connections are properly disposed of on shutdown
+    logging.info("App shutdown: Disposing of engine and closing all connections")
+    await engine.dispose()  # This is awaitable, ensuring proper closure of resources
 
 
 # # database.py

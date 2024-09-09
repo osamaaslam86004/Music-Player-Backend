@@ -8,6 +8,8 @@ django
 Mako
 asyncpg
 alembic
-tomlkit
 fastapi-utils
 typing-inspect
+pyjwt
+passlib
+bcrypt
