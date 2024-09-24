@@ -10,3 +10,5 @@ asyncpg
 alembic
 fastapi-utils
 typing-inspect
+psycopg==3.2.2 
+psycopg-binary==3.2.2

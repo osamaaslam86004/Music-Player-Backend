@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from play_music_track.routers import upload
+from play_music_track.routers.upload import router
 from contextlib import asynccontextmanager
 from fastapi_utils.tasks import repeat_every
-import logging
 from database import AsyncSessionLocal, engine
+import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -69,4 +69,4 @@ app.add_middleware(
 logger.info(f"CORS allowed origins: {CORS_ALLOWED_ORIGINS}")
 
 # Include the upload module's routes
-app.include_router(upload.router, tags=["Music"])
+app.include_router(router, tags=["Music"])
