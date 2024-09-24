@@ -50,7 +50,13 @@ async def upload_audio(
             author_name=audio_data.author_name,
         )
         db.add(audio_entry)
-        await db.commit()
+        try:
+            await db.commit()
+        except Exception as e:
+            logging.error(f"Failed to commit to the database: {e}")
+            await db.rollback()  # Rollback the transaction in case of failure
+            raise  # Re-raise the exception for debugging
+
         await db.refresh(audio_entry)
 
         return {
@@ -64,7 +70,7 @@ async def upload_audio(
         logging.error(f"Database connection failed: {e}")
 
         return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content=str(e),
         )
 
