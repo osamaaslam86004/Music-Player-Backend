@@ -87,7 +87,8 @@ async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
 # from typing import List
 # from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
 # from play_music_track.services.cloudinary_services import upload_to_cloudinary
-# from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse
+
 # from pydantic import ValidationError
 # from database import get_db
 # from play_music_track.models.models import Audio as AudioModel
@@ -170,18 +171,18 @@ async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
 #         )
 
 
-# @router.get("/")
-# def read_root():
-#     return RedirectResponse(url="/docs")
+@router.get("/")
+def read_root():
+    return RedirectResponse(url="/docs")
 
 
-# @router.options("/upload/")
-# async def options_upload():
-#     return JSONResponse(
-#         headers={
-#             "Access-Control-Allow-Origin": "*",
-#             "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-#             "Access-Control-Allow-Headers": "*",
-#         },
-#         content=None,
-#     )
+@router.options("/upload/")
+async def options_upload():
+    return JSONResponse(
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        },
+        content=None,
+    )
