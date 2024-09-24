@@ -11,11 +11,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-# from database import Base, engine
-
-app = FastAPI()
-
-
 CORS_ALLOWED_ORIGINS = [
     "https://music-player-ui-ux.vercel.app",
     "http://127.0.0.1:60640",
