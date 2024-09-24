@@ -27,7 +27,7 @@ engine = create_async_engine(
     pool_size=5,
     max_overflow=5,
     pool_timeout=360,  # Adjust timeout to wait for a connection from the pool
-    pool_recycle=360,
+    pool_recycle=3600,
     # poolclass = NullPoll 1. only be used in synchronous calls (db-api)
     # 2. causes opening and closing connection for every query 3. connection pooling becomes useless
 )

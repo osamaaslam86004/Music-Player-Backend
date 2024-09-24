@@ -64,6 +64,7 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+logger.info(f"CORS allowed origins: {CORS_ALLOWED_ORIGINS}")
 
 # Include the upload module's routes
 app.include_router(upload.router, tags=["Music"])
