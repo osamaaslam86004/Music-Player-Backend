@@ -11,9 +11,8 @@ logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)  # Logs all SQL queries
 
 
-# DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
+DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb"
 # DATABASE_URL = "postgresql+asyncpg://postgres:osama1122334455!@localhost:5432/postgres"
-DATABASE_URL = "postgresql+asyncpg://default:A9dGRnxcCk2b@ep-bold-scene-a4j046n4-pooler.us-east-1.aws.neon.tech:5432/verceldb?ssl=no-verify&pgbouncer=true&connect_timeout=15&connection_limit=10"
 
 # SSL context setup
 # ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
