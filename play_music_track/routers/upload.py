@@ -94,3 +94,15 @@ async def get_audio_tracks(db: AsyncSession = Depends(get_db)):
 @router.get("/")
 def read_root():
     return RedirectResponse(url="/docs")
+
+
+@router.options("/upload/")
+async def options_upload():
+    return JSONResponse(
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        },
+        content=None,
+    )
