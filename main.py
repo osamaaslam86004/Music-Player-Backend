@@ -24,17 +24,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=CORS_ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["POST", "GET", "OPTIONS"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-)
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup task: keep database connection alive
@@ -63,6 +52,17 @@ async def lifespan(app: FastAPI):
 
 # Set lifespan context in the FastAPI app
 app = FastAPI(lifespan=lifespan)
+
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["POST", "GET", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
 
 
 # Include the upload module's routes
