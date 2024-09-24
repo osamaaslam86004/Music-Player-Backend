@@ -13,14 +13,16 @@ logger = logging.getLogger(__name__)
 
 CORS_ALLOWED_ORIGINS = [
     "https://music-player-ui-ux.vercel.app",
-    "http://127.0.0.1:60640",
     "https://osama11111.pythonanywhere.com",
     "https://osamaaslam.pythonanywhere.com",
     "https://web.postman.co",
     "https://diverse-intense-whippet.ngrok-free.app",
-    "http://127.0.0.1:5500",
     "https://resume-builder-integrated-with-resume-api.vercel.app",
-    "https://resume-builder-pwa.vercel.app/",
+    "https://resume-builder-pwa.vercel.app",
+    "http://127.0.0.1:60640",
+    "http://127.0.0.1:5500",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
 
 
