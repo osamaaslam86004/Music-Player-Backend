@@ -4,7 +4,7 @@ from play_music_track.routers import upload
 from contextlib import asynccontextmanager
 from fastapi_utils.tasks import repeat_every
 import logging
-from database import AsyncSessionLocal
+from database import AsyncSessionLocal, engine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -58,17 +58,17 @@ async def lifespan(app: FastAPI):
     # Startup tasks before yielding control to the app
     yield
 
+    await keep_db_alive()
+
     # Shutdown tasks (if any)
     logger.info("Shutting down.")
     # Cleanup tasks go here if necessary
+    await engine.dispose()
 
 
 # Set lifespan context in the FastAPI app
 app = FastAPI(lifespan=lifespan)
 
 
-# Sync Operation: Create all tables in the database
-# Base.metadata.create_all(bind=engine)
-
 # Include the upload module's routes
-app.include_router(upload.router)
+app.include_router(upload.router, tags=["Music"])

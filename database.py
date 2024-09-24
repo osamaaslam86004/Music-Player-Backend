@@ -25,9 +25,9 @@ engine = create_async_engine(
     # connect_args={"ssl": {}},  # Pass the SSL context to the connection or use default
     echo=True,
     pool_size=5,
-    max_overflow=10,
+    max_overflow=5,
     pool_timeout=360,  # Adjust timeout to wait for a connection from the pool
-    pool_recycle=3600,
+    pool_recycle=360,
     # poolclass = NullPoll 1. only be used in synchronous calls (db-api)
     # 2. causes opening and closing connection for every query 3. connection pooling becomes useless
 )
@@ -41,19 +41,13 @@ AsyncSessionLocal = sessionmaker(
 
 # Dependency to get the database session in FastAPI routes with retry logic
 async def get_db():
-    retries = 25
-    while retries > 0:
-        try:
-            async with AsyncSessionLocal() as session:
-                yield session
-                break  # Exit the loop if the session is successful
-        except OperationalError as e:
-            logging.error(f"Database connection failed: {e}. Retrying in 5 seconds...")
-            # await asyncio.sleep(5)  # Wait before retrying
-            retries -= 1
 
-    if retries == 0:
-        logging.error("Failed to establish a database connection after retries.")
+    try:
+        async with AsyncSessionLocal() as session:
+            yield session
+
+    except OperationalError as e:
+        logging.error(f"Database connection failed: {e}")
 
 
 # # database.py
