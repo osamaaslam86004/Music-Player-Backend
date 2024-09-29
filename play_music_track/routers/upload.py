@@ -7,6 +7,23 @@ logger = logging.getLogger("uvicorn")
 router = APIRouter()
 
 
+@router.get("/")
+def read_root():
+    return RedirectResponse(url="/docs")
+
+
+@router.options("/upload/")
+async def options_upload():
+    return JSONResponse(
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        },
+        content=None,
+    )
+
+
 # ----------------------- for psycopg3 -------------------------------
 from fastapi import APIRouter, File, UploadFile, Form, Depends, status
 from fastapi.responses import JSONResponse
@@ -169,20 +186,3 @@ from fastapi.responses import RedirectResponse
 #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 #             content=f"{e}",
 #         )
-
-
-@router.get("/")
-def read_root():
-    return RedirectResponse(url="/docs")
-
-
-@router.options("/upload/")
-async def options_upload():
-    return JSONResponse(
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        },
-        content=None,
-    )
