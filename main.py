@@ -1,10 +1,13 @@
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from play_music_track.routers.upload import router
-from contextlib import asynccontextmanager
+from fastapi.responses import RedirectResponse
 from fastapi_utils.tasks import repeat_every
+
 from database import AsyncSessionLocal, engine
-import logging
+from play_music_track.routers.upload import router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,8 +22,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://diverse-intense-whippet.ngrok-free.app",
     "https://resume-builder-integrated-with-resume-api.vercel.app",
     "https://resume-builder-pwa.vercel.app",
-    "http://127.0.0.1:60640",
-    "http://127.0.0.1:5500",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
@@ -67,6 +68,13 @@ app.add_middleware(
 )
 
 logger.info(f"CORS allowed origins: {CORS_ALLOWED_ORIGINS}")
+
+
+# Define root route that redirects to /docs
+@app.get("/", include_in_schema=False)
+async def redirect_to_docs():
+    return RedirectResponse(url="/docs")
+
 
 # Include the upload module's routes
 app.include_router(router, tags=["Music"])

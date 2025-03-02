@@ -1,15 +1,12 @@
 import logging
+
+from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 
 logger = logging.getLogger("uvicorn")
 
 
 router = APIRouter()
-
-
-@router.get("/")
-def read_root():
-    return RedirectResponse(url="/docs")
 
 
 @router.options("/upload/")
@@ -24,19 +21,18 @@ async def options_upload():
     )
 
 
-# ----------------------- for psycopg3 -------------------------------
-from fastapi import APIRouter, File, UploadFile, Form, Depends, status
-from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
-from play_music_track.services.cloudinary_services import upload_to_cloudinary
+
+# ----------------------- for psycopg3 -------------------------------
+from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from pydantic import ValidationError
-from database import get_db
-from play_music_track.models.models import Audio
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-router = APIRouter()
+from database import get_db
+from play_music_track.models.models import Audio
+from play_music_track.schemas.audio import AudioFormSchema, AudioResponseSchema
+from play_music_track.services.cloudinary_services import upload_to_cloudinary
 
 
 @router.post("/upload/", response_model=AudioResponseSchema)

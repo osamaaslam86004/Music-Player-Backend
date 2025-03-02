@@ -31,19 +31,3 @@ async def upload_to_cloudinary(file):
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content=f"Cloudinary error: {str(e)}",
         )
-
-
-# async def upload_to_cloudinary(file):
-#     try:
-#         cloudinary_response = await upload(
-#             file,
-#             resource_type="auto",
-#         )
-#         secure_url = cloudinary_response.get("secure_url")
-#         return secure_url
-
-#     except Exception as e:
-#         return JSONResponse(
-#             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-#             content=f"Cloudinary error: {str(e)}",
-#         )
